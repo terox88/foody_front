@@ -20,6 +20,8 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
 import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 @Route("user/:userId")
@@ -32,6 +34,8 @@ public class UserView extends VerticalLayout implements BeforeEnterObserver {
    private TodoistConfig todoistConfig;
    private Anchor integrateLink = new Anchor("", "INTEGRATE");
    private FormLayout integrateLayout = new FormLayout();
+   private FormLayout projectLayout = new FormLayout();
+   private User user;
     public UserView(BackendService service, TodoistConfig todoistConfig) {
         this.service = service;
         this.todoistConfig = todoistConfig;
@@ -40,7 +44,10 @@ public class UserView extends VerticalLayout implements BeforeEnterObserver {
         grid.addComponentColumn(week -> {
             Button details = new Button("Details");
             details.addClickListener(event -> {
-                details.getUI().ifPresent(ui-> ui.navigate(WeeklyRecipesView.class, new RouteParameters("weekId", Long.valueOf(week.getId()).toString())));
+                Map<String, String> params = new HashMap<>();
+                params.put("userId", Long.valueOf(userId).toString());
+                params.put("weekId", Long.valueOf(week.getId()).toString());
+                details.getUI().ifPresent(ui-> ui.navigate(WeeklyRecipesView.class, new RouteParameters(params)));
             });
             return details;
         }).setHeader("");
@@ -91,8 +98,16 @@ public class UserView extends VerticalLayout implements BeforeEnterObserver {
         createForm.add(datePicker);
         createForm.add(createWeeklyRecipes);
         createForm.setMaxWidth("150px");
-        integrateLayout.add(new H4("You can integrate this app with Todoist application"));
+        integrateLayout.add(new H5("You can integrate this app with Todoist application"));
         integrateLayout.add(integrateLink);
+        Button createProject = new Button("Create");
+        createProject.addClickListener(event -> {
+            service.createTodoistProject(userId);
+            refresh();
+        });
+        projectLayout.setVisible(false);
+        projectLayout.add(new H5("You can create new project in your Todoist application"));
+        projectLayout.add(createProject);
 
 
         add(new H2("Your weekly recipes"));
@@ -103,6 +118,7 @@ public class UserView extends VerticalLayout implements BeforeEnterObserver {
         add(preferencesForm);
         add(savePreferencesButton);
         add(integrateLayout);
+        add(projectLayout);
         setSizeFull();
     }
     @Override
@@ -115,15 +131,19 @@ public class UserView extends VerticalLayout implements BeforeEnterObserver {
             } catch (NumberFormatException e) {
                 event.forwardTo(MainView.class);
             }
+            user = service.getUser(userId);
             setUrl();
 
             refresh();
-            integrateVisibility();
+
 
     }
 
     public void refresh() {
+        user = service.getUser(userId);
         grid.setItems(service.getUsersWeeklyRecipes(userId));
+        integrateVisibility();
+        createVisibility();
     }
     public String createAuthUrl() {
         return UriComponentsBuilder.fromHttpUrl(todoistConfig.getEndpoint())
@@ -135,12 +155,18 @@ public class UserView extends VerticalLayout implements BeforeEnterObserver {
         this.integrateLink.setHref(createAuthUrl());
     }
     public void integrateVisibility() {
-        User user = service.getUser(userId);
         if(user.isHasToken()) {
             integrateLayout.setVisible(false);
         }
-
     }
+    public void createVisibility() {
+        if(user.isHasToken() && !user.isHasProject()) {
+            projectLayout.setVisible(true);
+        } else {
+            projectLayout.setVisible(false);
+        }
+    }
+
 
 
 

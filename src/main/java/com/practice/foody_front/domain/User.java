@@ -8,7 +8,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
 import java.time.LocalTime;
-@Data
+@Getter
 @AllArgsConstructor
 @EqualsAndHashCode
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -25,6 +25,8 @@ public class User {
     private Role role;
     @JsonProperty("hasToken")
     private boolean hasToken;
+    @JsonProperty("hasProject")
+    private boolean hasProject;
 
     public User() {
     }

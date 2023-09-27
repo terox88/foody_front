@@ -31,17 +31,15 @@ public class TodoistIntegrationView extends VerticalLayout implements BeforeEnte
 
     }
 
-    //@Override
+    @Override
     public void beforeEnter(BeforeEnterEvent event) {
         Map<String, List<String>> parameters = event.getLocation().getQueryParameters().getParameters();
         code = parameters.get("code").get(0);
         String userIdStr = parameters.get("state").get(0);
-        log.info("user id: " + userIdStr);
-        log.info("code: " + code);
         try {
             userId = Long.parseLong(userIdStr);
         } catch (NumberFormatException e) {
-            //event.forwardTo(MainView.class);
+            event.forwardTo(MainView.class);
         }
     }
 

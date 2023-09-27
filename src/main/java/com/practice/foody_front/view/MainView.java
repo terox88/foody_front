@@ -2,17 +2,12 @@ package com.practice.foody_front.view;
 
 import com.practice.foody_front.domain.User;
 import com.practice.foody_front.service.BackendService;
-import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
-import com.vaadin.flow.router.RouteParam;
 import com.vaadin.flow.router.RouteParameters;
-import com.vaadin.flow.router.RouterLink;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
+
 
 @Route
 public class MainView extends VerticalLayout {

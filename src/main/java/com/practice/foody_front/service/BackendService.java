@@ -1,6 +1,7 @@
 package com.practice.foody_front.service;
 
 import com.practice.foody_front.config.BackendConfig;
+import com.practice.foody_front.domain.DailyRecipes;
 import com.practice.foody_front.domain.Preferences;
 import com.practice.foody_front.domain.User;
 import com.practice.foody_front.domain.WeeklyRecipes;
@@ -54,5 +55,16 @@ public class BackendService {
                 .queryParam("userId", userId)
                 .queryParam("code", code).build().encode().toUri();
         restTemplate.put(uri, null);
+    }
+    public void createTodoistProject(long userId) {
+        URI uri = UriComponentsBuilder.fromHttpUrl(backendConfig.getBackendUrl()+"/users/todoist")
+                        .queryParam("userId", userId).build().encode().toUri();
+        restTemplate.put(uri, null);
+    }
+    public List<DailyRecipes> getDailyRecipesList(long weekId) {
+        URI uri = UriComponentsBuilder.fromHttpUrl(backendConfig.getBackendUrl()+"/recipe/daily/list")
+                .queryParam("weekId", weekId).build().encode().toUri();
+        ResponseEntity<DailyRecipes[]> response = restTemplate.getForEntity(uri, DailyRecipes[].class);
+        return Arrays.stream(response.getBody()).toList();
     }
 }
