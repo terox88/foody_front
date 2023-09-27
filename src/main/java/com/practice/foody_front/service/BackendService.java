@@ -9,7 +9,6 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RequestCallback;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -49,6 +48,11 @@ public class BackendService {
                 .queryParam("day", begin).build().encode().toUri();
         restTemplate.postForObject(uri, null, WeeklyRecipes.class);
 
-
+    }
+    public void todoistIntegration(long userId, String code){
+        URI uri = UriComponentsBuilder.fromHttpUrl(backendConfig.getBackendUrl()+"/users/token")
+                .queryParam("userId", userId)
+                .queryParam("code", code).build().encode().toUri();
+        restTemplate.put(uri, null);
     }
 }

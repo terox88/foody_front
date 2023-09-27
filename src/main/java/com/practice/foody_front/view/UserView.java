@@ -1,5 +1,6 @@
 package com.practice.foody_front.view;
 
+import com.practice.foody_front.config.TodoistConfig;
 import com.practice.foody_front.domain.Preferences;
 import com.practice.foody_front.domain.User;
 import com.practice.foody_front.domain.UserChose;
@@ -10,26 +11,32 @@ import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.component.html.H1;
-import com.vaadin.flow.component.html.H2;
-import com.vaadin.flow.component.html.Header;
+import com.vaadin.flow.component.html.*;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.*;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
+import org.springframework.web.util.UriComponentsBuilder;
 
+import java.net.URI;
 import java.time.LocalDate;
 import java.util.Set;
 
-@Route("user/:userId?")
-
+@Route("user/:userId")
+@Slf4j
 public class UserView extends VerticalLayout implements BeforeEnterObserver {
     private Preferences preferences = new Preferences();
     private long userId;
     private Grid<WeeklyRecipes> grid = new Grid<>(WeeklyRecipes.class);
-    BackendService service;
-    public UserView(BackendService service) {
+    private BackendService service;
+   private TodoistConfig todoistConfig;
+   private Anchor integrateLink = new Anchor("", "INTEGRATE");
+   private FormLayout integrateLayout = new FormLayout();
+    public UserView(BackendService service, TodoistConfig todoistConfig) {
         this.service = service;
+        this.todoistConfig = todoistConfig;
         grid.setColumns("weekBegin", "weekEnd");
+        grid.setMinHeight("300px");
         grid.addComponentColumn(week -> {
             Button details = new Button("Details");
             details.addClickListener(event -> {
@@ -58,6 +65,7 @@ public class UserView extends VerticalLayout implements BeforeEnterObserver {
             if (option4.getValue()) {
                 preferences.getPreferences().add(UserChose.VEGETARIAN);
             }
+            log.info("user id: " + userId);
             service.changePreferencees(userId, preferences);
             option1.clear();
             option2.clear();
@@ -83,8 +91,8 @@ public class UserView extends VerticalLayout implements BeforeEnterObserver {
         createForm.add(datePicker);
         createForm.add(createWeeklyRecipes);
         createForm.setMaxWidth("150px");
-
-
+        integrateLayout.add(new H4("You can integrate this app with Todoist application"));
+        integrateLayout.add(integrateLink);
 
 
         add(new H2("Your weekly recipes"));
@@ -94,6 +102,7 @@ public class UserView extends VerticalLayout implements BeforeEnterObserver {
         add("Set you preferences");
         add(preferencesForm);
         add(savePreferencesButton);
+        add(integrateLayout);
         setSizeFull();
     }
     @Override
@@ -106,14 +115,33 @@ public class UserView extends VerticalLayout implements BeforeEnterObserver {
             } catch (NumberFormatException e) {
                 event.forwardTo(MainView.class);
             }
+            setUrl();
 
             refresh();
+            integrateVisibility();
 
     }
 
     public void refresh() {
         grid.setItems(service.getUsersWeeklyRecipes(userId));
     }
+    public String createAuthUrl() {
+        return UriComponentsBuilder.fromHttpUrl(todoistConfig.getEndpoint())
+                .queryParam("client_id", todoistConfig.getClientID())
+                .queryParam("scope", "data:read_write")
+                .queryParam("state", Long.valueOf(userId).toString()).build().encode().toUri().toString();
+    }
+    public void setUrl(){
+        this.integrateLink.setHref(createAuthUrl());
+    }
+    public void integrateVisibility() {
+        User user = service.getUser(userId);
+        if(user.isHasToken()) {
+            integrateLayout.setVisible(false);
+        }
+
+    }
+
 
 
 

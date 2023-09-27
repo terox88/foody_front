@@ -23,6 +23,8 @@ public class User {
     private Preferences preferences;
     @JsonProperty("role")
     private Role role;
+    @JsonProperty("hasToken")
+    private boolean hasToken;
 
     public User() {
     }
