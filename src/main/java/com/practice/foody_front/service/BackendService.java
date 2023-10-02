@@ -1,10 +1,7 @@
 package com.practice.foody_front.service;
 
 import com.practice.foody_front.config.BackendConfig;
-import com.practice.foody_front.domain.DailyRecipes;
-import com.practice.foody_front.domain.Preferences;
-import com.practice.foody_front.domain.User;
-import com.practice.foody_front.domain.WeeklyRecipes;
+import com.practice.foody_front.domain.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
@@ -66,5 +63,19 @@ public class BackendService {
                 .queryParam("weekId", weekId).build().encode().toUri();
         ResponseEntity<DailyRecipes[]> response = restTemplate.getForEntity(uri, DailyRecipes[].class);
         return Arrays.stream(response.getBody()).toList();
+    }
+    public List<Recipe> getRecipesForDay(long dayId) {
+        ResponseEntity<Recipe[]> response = restTemplate.getForEntity(backendConfig.getBackendUrl()+"/recipe/"+dayId, Recipe[].class);
+        return Arrays.stream(response.getBody()).toList();
+    }
+    public Recipe getRecipe(long recipeId) {
+        URI uri = UriComponentsBuilder.fromHttpUrl(backendConfig.getBackendUrl()+"/recipe")
+                .queryParam("recipeId", recipeId).build().encode().toUri();
+        return restTemplate.getForObject(uri, Recipe.class);
+    }
+    public DailyRecipes getDailyRecipes(long dayId) {
+        URI uri = UriComponentsBuilder.fromHttpUrl(backendConfig.getBackendUrl()+"/recipe/daily")
+                .queryParam("dailyId", dayId).build().encode().toUri();
+        return restTemplate.getForObject(uri, DailyRecipes.class);
     }
 }

@@ -49,7 +49,7 @@ public class WeeklyRecipesView extends VerticalLayout implements BeforeEnterObse
         RouteParameters parameters = event.getRouteParameters();
 
         String weekIdStr = parameters.get("weekId").orElse("");
-        String userIdStr =parameters.get("userId").orElse("");
+        String userIdStr = parameters.get("userId").orElse("");
         try {
             weekId = Long.parseLong(weekIdStr);
             userId = Long.parseLong(userIdStr);

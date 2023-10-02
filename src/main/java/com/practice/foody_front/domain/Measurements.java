@@ -8,16 +8,14 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 @EqualsAndHashCode
-public class TodoistTask {
+public class Measurements {
     @JsonProperty("id")
-    private String id;
-    @JsonProperty("content")
-    private String content;
-    @JsonProperty("url")
-    private String url;
-    @JsonProperty("project_id")
-    private String projectId;
+    private long id;
+    @JsonProperty("quantity")
+    private String quantity;
+    @JsonProperty("unit")
+    private Unit unit;
 
-    public TodoistTask() {
+    public Measurements() {
     }
 }

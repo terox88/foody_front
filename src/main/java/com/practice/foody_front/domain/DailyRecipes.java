@@ -12,7 +12,6 @@ import java.util.List;
 @Getter
 @AllArgsConstructor
 @EqualsAndHashCode
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class DailyRecipes {
     @JsonProperty("id")
     private long id;
@@ -23,6 +22,9 @@ public class DailyRecipes {
     private List<Long> recipesId;
     @JsonProperty("todoistTaskDto")
     private TodoistTask todoistTask;
+    @JsonProperty("shoppingList")
+    private String shoppingList;
+
 
     public DailyRecipes() {
     }
