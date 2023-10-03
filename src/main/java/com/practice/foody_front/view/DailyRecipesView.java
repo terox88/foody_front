@@ -2,9 +2,8 @@ package com.practice.foody_front.view;
 
 import com.practice.foody_front.domain.DailyRecipes;
 import com.practice.foody_front.domain.Recipe;
+import com.practice.foody_front.domain.User;
 import com.practice.foody_front.service.BackendService;
-import com.vaadin.flow.component.Html;
-import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.details.Details;
 import com.vaadin.flow.component.formlayout.FormLayout;
@@ -28,6 +27,7 @@ public class DailyRecipesView extends VerticalLayout implements BeforeEnterObser
     private BackendService service;
     FormLayout mealLayout = new FormLayout();
     private Details shoppingList = new Details("SHOPPING LIST");
+    VerticalLayout content = new VerticalLayout();
 
     public DailyRecipesView(BackendService service) {
         this.service = service;
@@ -74,9 +74,24 @@ public class DailyRecipesView extends VerticalLayout implements BeforeEnterObser
             mealLayout.add(button);
         }
     }public void createShoppingList() {
-        VerticalLayout content = new VerticalLayout();
         String list = dailyRecipes.getShoppingList().replaceAll("\n", "; ");
-        content.add(list);
+        if (content.getComponentCount() == 0) {
+            content.add(list);
+        }
+        User user = service.getUser(userId);
+        if(user.isHasToken() && dailyRecipes.getTodoistTask().getContent() == null) {
+            Button createList = new Button("Create Todoist task");
+            createList.addClickListener(event -> {
+                service.createTodoistTask(dayId);
+                createList.setVisible(false);
+                refresh();
+            });
+            content.add(createList);
+        }
+        if(dailyRecipes.getTodoistTask().getUrl() != null) {
+            Anchor todoistUrl = new Anchor(dailyRecipes.getTodoistTask().getUrl(), "Todoist shopping list");
+            content.add(todoistUrl);
+        }
         shoppingList.addContent(content);
     }
 }

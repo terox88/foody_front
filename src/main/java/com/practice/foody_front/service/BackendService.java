@@ -58,6 +58,11 @@ public class BackendService {
                         .queryParam("userId", userId).build().encode().toUri();
         restTemplate.put(uri, null);
     }
+    public void createTodoistTask(long dayId) {
+        URI uri = UriComponentsBuilder.fromHttpUrl(backendConfig.getBackendUrl()+"/recipe/daily")
+                .queryParam("dailyId", dayId).build().encode().toUri();
+        restTemplate.postForObject(uri, null, TodoistTask.class);
+    }
     public List<DailyRecipes> getDailyRecipesList(long weekId) {
         URI uri = UriComponentsBuilder.fromHttpUrl(backendConfig.getBackendUrl()+"/recipe/daily/list")
                 .queryParam("weekId", weekId).build().encode().toUri();
