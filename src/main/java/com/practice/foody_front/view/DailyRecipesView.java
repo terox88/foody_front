@@ -35,6 +35,9 @@ public class DailyRecipesView extends VerticalLayout implements BeforeEnterObser
         add(mealLayout);
         add(new H3("Bellow is shopping list for this day"));
         add(shoppingList);
+        Button userPanel = new Button("User Panel");
+        userPanel.addClickListener(ev -> userPanel.getUI().ifPresent(ui-> ui.navigate(UserView.class, new RouteParameters("userId", Long.valueOf(userId).toString()))));
+        add(userPanel);
 
     }
 
@@ -49,7 +52,7 @@ public class DailyRecipesView extends VerticalLayout implements BeforeEnterObser
             userId = Long.parseLong(userIdStr);
 
         } catch (NumberFormatException e) {
-            event.forwardTo(MainView.class);
+            event.forwardTo(AdminView.class);
         }
 
         refresh();
@@ -69,6 +72,7 @@ public class DailyRecipesView extends VerticalLayout implements BeforeEnterObser
                 Map<String, String> params = new HashMap<>();
                 params.put("userId", Long.valueOf(userId).toString());
                 params.put("recipeId", Long.valueOf(recipe.getId()).toString());
+                params.put("dayId", Long.valueOf(dayId).toString());
                 button.getUI().ifPresent(ui -> ui.navigate(RecipesView.class, new RouteParameters(params)));
             });
             mealLayout.add(button);

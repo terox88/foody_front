@@ -4,8 +4,8 @@ import com.practice.foody_front.domain.Component;
 import com.practice.foody_front.domain.Instruction;
 import com.practice.foody_front.domain.Recipe;
 import com.practice.foody_front.service.BackendService;
-import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.H4;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -15,12 +15,15 @@ import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouteParameters;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-@Route(value = "recipe/:userId/:recipeId")
+@Route(value = "recipe/:userId/:recipeId/:dayId")
 public class RecipesView extends VerticalLayout implements BeforeEnterObserver {
     private long recipeId;
     private long userId;
+    private long dayId;
     private Recipe recipe;
     private BackendService service;
 
@@ -34,15 +37,18 @@ public class RecipesView extends VerticalLayout implements BeforeEnterObserver {
 
         String recipeIdStr = parameters.get("recipeId").orElse("");
         String userIdStr = parameters.get("userId").orElse("");
+        String dayIdStr = parameters.get("dayId").orElse("");
         try {
             recipeId = Long.parseLong(recipeIdStr);
             userId = Long.parseLong(userIdStr);
+            dayId = Long.parseLong(dayIdStr);
 
         } catch (NumberFormatException e) {
-            event.forwardTo(MainView.class);
+            event.forwardTo(AdminView.class);
         }
 
         recipe = service.getRecipe(recipeId);
+        add(new H2(recipe.getName()));
         add(new H4("Ingredients"));
        List<String> ingredients = recipe.getSections().stream().flatMap(component -> component.getComponents()
                 .stream().map(Component::getText)).toList();
@@ -66,5 +72,13 @@ public class RecipesView extends VerticalLayout implements BeforeEnterObserver {
         Button userPanel = new Button("User Panel");
         userPanel.addClickListener(ev -> userPanel.getUI().ifPresent(ui-> ui.navigate(UserView.class, new RouteParameters("userId", Long.valueOf(userId).toString()))));
         add(userPanel);
+        Button dailyRecipes = new Button("Back");
+        dailyRecipes.addClickListener(ev -> {
+            Map<String, String> params = new HashMap<>();
+            params.put("userId", Long.valueOf(userId).toString());
+            params.put("dayId", Long.valueOf(dayId).toString());
+            dailyRecipes.getUI().ifPresent(ui -> ui.navigate(DailyRecipesView.class, new RouteParameters(params)));
+        });
+        add(dailyRecipes);
     }
 }

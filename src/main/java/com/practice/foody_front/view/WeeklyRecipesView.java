@@ -1,8 +1,6 @@
 package com.practice.foody_front.view;
 
 import com.practice.foody_front.domain.DailyRecipes;
-import com.practice.foody_front.domain.User;
-import com.practice.foody_front.domain.WeeklyRecipes;
 import com.practice.foody_front.service.BackendService;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
@@ -14,15 +12,12 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouteParameters;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @Route( value = "week/:userId/:weekId")
 public class WeeklyRecipesView extends VerticalLayout implements BeforeEnterObserver {
     private long weekId;
     private long userId;
-    private User user;
-    private WeeklyRecipes weeklyRecipes;
     private Grid<DailyRecipes> grid = new Grid<>(DailyRecipes.class);
     private BackendService service;
 
@@ -55,7 +50,7 @@ public class WeeklyRecipesView extends VerticalLayout implements BeforeEnterObse
             userId = Long.parseLong(userIdStr);
 
         } catch (NumberFormatException e) {
-            event.forwardTo(MainView.class);
+            event.forwardTo(AdminView.class);
         }
         refresh();
 

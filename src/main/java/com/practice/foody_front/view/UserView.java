@@ -15,14 +15,12 @@ import com.vaadin.flow.component.html.*;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.*;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.net.URI;
+
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 @Route("user/:userId")
 @Slf4j
@@ -129,7 +127,7 @@ public class UserView extends VerticalLayout implements BeforeEnterObserver {
             try {
                 userId = Long.parseLong(userIdStr);
             } catch (NumberFormatException e) {
-                event.forwardTo(MainView.class);
+                event.forwardTo(AdminView.class);
             }
             user = service.getUser(userId);
             setUrl();

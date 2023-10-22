@@ -12,9 +12,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -30,11 +28,18 @@ public class BackendService {
     public User getUser(long userId) {
         return restTemplate.getForObject(backendConfig.getBackendUrl()+"/users/"+ userId, User.class);
     }
+    public User createUser(User user) {
+        return restTemplate.postForObject(backendConfig.getBackendUrl()+"/users", user, User.class);
+    }
     public void changePreferencees(Long userId, Preferences preferences) {
-        HttpEntity entity =new HttpEntity<>(preferences);
+        HttpEntity entity = new HttpEntity<>(preferences);
         URI uri = UriComponentsBuilder.fromHttpUrl(backendConfig.getBackendUrl()+"/users/pref")
                         .queryParam("userId", userId).build().encode().toUri();
       restTemplate.exchange(uri, HttpMethod.PUT, entity,User.class);
+    }
+    public User login(LoginData loginData) {
+        HttpEntity entity = new HttpEntity<>(loginData);
+        return restTemplate.exchange(backendConfig.getBackendUrl()+"/users/login", HttpMethod.POST, entity, User.class).getBody();
     }
     public List<WeeklyRecipes> getUsersWeeklyRecipes(long userId) {
         ResponseEntity<WeeklyRecipes[]> response = restTemplate.getForEntity(backendConfig.getBackendUrl()+"/week/"+ userId, WeeklyRecipes[].class);

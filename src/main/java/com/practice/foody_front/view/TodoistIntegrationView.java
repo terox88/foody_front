@@ -1,10 +1,8 @@
 package com.practice.foody_front.view;
 
 import com.practice.foody_front.service.BackendService;
-import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.page.Page;
 import com.vaadin.flow.router.*;
 import lombok.extern.slf4j.Slf4j;
 
@@ -39,7 +37,7 @@ public class TodoistIntegrationView extends VerticalLayout implements BeforeEnte
         try {
             userId = Long.parseLong(userIdStr);
         } catch (NumberFormatException e) {
-            event.forwardTo(MainView.class);
+            event.forwardTo(AdminView.class);
         }
     }
 
